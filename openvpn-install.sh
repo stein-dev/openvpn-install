@@ -274,8 +274,9 @@ server 10.8.0.0 255.255.255.0" > /etc/openvpn/server/server.conf
 	if [[ -z "$ip6" ]]; then
 		echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server/server.conf
 	else
-		echo 'server-ipv6 fddd:1194:1194:1194::/64' >> /etc/openvpn/server/server.conf
-		echo 'push "redirect-gateway def1 ipv6 bypass-dhcp"' >> /etc/openvpn/server/server.conf
+		#echo 'server-ipv6 fddd:1194:1194:1194::/64' >> /etc/openvpn/server/server.conf
+		#echo 'push "redirect-gateway def1 ipv6 bypass-dhcp"' >> /etc/openvpn/server/server.conf
+		sleep 0
 	fi
 	echo 'ifconfig-pool-persist ipp.txt' >> /etc/openvpn/server/server.conf
 	# DNS
@@ -314,7 +315,7 @@ server 10.8.0.0 255.255.255.0" > /etc/openvpn/server/server.conf
 			echo 'push "dhcp-option DNS 94.140.15.15"' >> /etc/openvpn/server/server.conf
 		;;
 	esac
-	echo "keepalive 10 120
+	echo "keepalive 3 6
 cipher AES-256-CBC
 user nobody
 group $group_name
@@ -332,9 +333,9 @@ crl-verify crl.pem" >> /etc/openvpn/server/server.conf
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 	if [[ -n "$ip6" ]]; then
 		# Enable net.ipv6.conf.all.forwarding for the system
-		echo "net.ipv6.conf.all.forwarding=1" >> /etc/sysctl.d/30-openvpn-forward.conf
+		echo "net.ipv6.conf.all.forwarding=0" >> /etc/sysctl.d/30-openvpn-forward.conf
 		# Enable without waiting for a reboot or service restart
-		echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
+		echo 0 > /proc/sys/net/ipv6/conf/all/forwarding
 	fi
 	if systemctl is-active --quiet firewalld.service; then
 		# Using both permanent and not permanent rules to avoid a firewalld
